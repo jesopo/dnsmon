@@ -8,11 +8,13 @@ from ircrobots import Bot
 from .config   import Config
 
 async def _get_records(
-        domain: str,
-        type:   str
+        domain:      str,
+        type:        str,
+        nameservers: List[str]
         ) -> List[str]:
 
-    resolver = dns.asyncresolver.Resolver()
+    resolver = dns.asyncresolver.Resolver(configure=False)
+    resolver.nameservers = nameservers
     try:
         result = await resolver.resolve(domain, type)
     except dns.resolver.NoAnswer:
@@ -35,7 +37,9 @@ async def run(
         outs: List[str] = []
         for domain in config.records:
             for dns_type, dns_expected in config.records[domain].items():
-                dns_actual = set(await _get_records(domain, dns_type))
+                dns_actual = set(await _get_records(
+                    domain, dns_type, config.nameservers
+                ))
 
                 if not dns_actual:
                     if dns_expected:

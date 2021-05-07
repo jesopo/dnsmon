@@ -7,14 +7,15 @@ import yaml
 
 @dataclass
 class Config(object):
-    server:   Tuple[str, int, bool]
-    nickname: str
-    username: str
-    realname: str
-    password: str
-    channel:  str
-    sasl:     Tuple[str, str]
-    records:  Dict[str, Dict[str, Set[str]]]
+    server:      Tuple[str, int, bool]
+    nickname:    str
+    username:    str
+    realname:    str
+    password:    str
+    channel:     str
+    sasl:        Tuple[str, str]
+    nameservers: List[str]
+    records:     Dict[str, Dict[str, Set[str]]]
 
 def load(filepath: str):
     with open(filepath) as file:
@@ -45,5 +46,6 @@ def load(filepath: str):
         config_yaml["password"],
         config_yaml["channel"],
         (config_yaml["sasl"]["username"], config_yaml["sasl"]["password"]),
+        config_yaml["nameservers"],
         records
     )
