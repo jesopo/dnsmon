@@ -48,10 +48,8 @@ async def run(
         utcnow  = datetime.utcnow().replace(microsecond=0)
         nextmin = 60-utcnow.second
         await asyncio.sleep(nextmin)
-        utcnow  = utcnow.replace(minute=utcnow.minute+1, second=0)
 
         outs: List[str] = []
-
         for domain in config.records:
             for dns_type, dns_expected in config.records[domain].items():
                 dns_actual = set(await _get_records(domain, dns_type))
