@@ -1,0 +1,14 @@
+server: chat.freenode.net:+6697
+nickname: jess-dnsmon
+#password: hunter2
+channel: "##jess-dnsmon"
+
+sasl:
+  username: dnsmon
+  password: hunter3
+
+records:
+  lolnerd.net:
+    MX:
+      - 10 in1-smtp.messagingengine.com.
+      - 20 in2-smtp.messagingengine.com.
