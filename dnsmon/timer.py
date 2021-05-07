@@ -2,7 +2,7 @@ import asyncio, re
 from datetime import datetime
 from typing   import List, Optional, Tuple
 
-import aiodns
+import dns.asyncresolver, dns.resolver
 from irctokens import build
 from ircrobots import Bot
 from .config   import Config
@@ -12,32 +12,15 @@ async def _get_records(
         type:   str
         ) -> List[str]:
 
-    resolver = aiodns.DNSResolver()
+    resolver = dns.asyncresolver.Resolver()
     try:
-        oresult = await resolver.query(domain, type)
-    except aiodns.error.DNSError:
+        result = await resolver.resolve(domain, type)
+    except dns.resolver.NoAnswer:
         return []
 
-    if isinstance(oresult, list):
-        results = oresult
-    else:
-        results = [oresult]
-
     outs: List[str] = []
-    for r in results:
-        if   type == "SOA":
-            outs.append(
-                f"{r.nsname}. {r.hostmaster}. {r.serial}"
-                f" {r.refresh} {r.retry} {r.expires}"
-            )
-        elif type in {"A", "AAAA"}:
-            outs.append(r.host)
-        elif type == "NS":
-            outs.append(f"{r.host}.")
-        elif type == "CNAME":
-            outs.append(f"{r.cname}.")
-        elif type == "MX":
-            outs.append(f"{r.priority} {r.host}.")
+    for r in result.rrset:
+        outs.append(r.to_text())
     return outs
 
 async def run(
