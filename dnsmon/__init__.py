@@ -18,7 +18,6 @@ class Server(BaseServer):
     async def line_read(self, line: Line):
         if line.command == RPL_WELCOME:
             await self.send(build("MODE", [self.nickname, "+g"]))
-            await self.send(build("JOIN", [self._config.channel]))
 
     def line_preread(self, line: Line):
         print(f"< {line.format()}")
