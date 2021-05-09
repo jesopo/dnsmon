@@ -13,12 +13,8 @@ async def _get_records(
         nameserver: str
         ) -> List[str]:
 
-    query = dns.message.make_query(domain, rtype)
-    try:
-        result = await dns.asyncquery.udp(query, nameserver)
-    except (dns.resolver.NoAnswer,
-            dns.resolver.NXDOMAIN):
-        return []
+    query  = dns.message.make_query(domain, rtype)
+    result = await dns.asyncquery.udp(query, nameserver)
 
     outs: List[str] = []
     for rrset in result.answer:
@@ -58,12 +54,16 @@ async def run(
                 if not domain in last_values:
                     last_values[domain] = {}
 
-                last_actual = last_values[domain].get(dns_type, set())
-                if not dns_actual == last_actual:
+                if (not dns_type in last_values[domain] or
+                        not dns_actual == last_values[domain][dns_type]):
+
                     outs.append((False, f"changed {type_format}"))
+
                     if dns_type in last_values[domain]:
+                        last_actual = last_values[domain][dns_type]
                         was_s = ", ".join(sorted(last_actual))
                         outs.append((False, f"  was: {was_s}"))
+
                     now_s = ", ".join(sorted(dns_actual))
                     outs.append((False, f"  now: {now_s}"))
 
