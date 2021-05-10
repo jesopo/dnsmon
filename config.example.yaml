@@ -8,8 +8,15 @@ sasl:
   username: dnsmon
   password: hunter3
 
+aliases:
+  1.2.3.4: test
+
 records:
-  lolnerd.net:
+  lolnerd.net.:
     MX:
       - 10 in1-smtp.messagingengine.com.
       - 20 in2-smtp.messagingengine.com.
+
+  test.lolnerd.net.:
+    ~A:
+      - test

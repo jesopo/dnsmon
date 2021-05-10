@@ -16,8 +16,8 @@ class Config(object):
     channel_warn: str
     sasl:         Tuple[str, str]
     nameserver:   str
+    aliases:      Dict[str, str]
     records:      Dict[str, Dict[str, Set[str]]]
-
 
 def load(filepath: str):
     with open(filepath) as file:
@@ -50,5 +50,6 @@ def load(filepath: str):
         config_yaml["channel-warn"],
         (config_yaml["sasl"]["username"], config_yaml["sasl"]["password"]),
         config_yaml["nameserver"],
+        config_yaml.get("aliases", {}),
         records
     )
