@@ -1,11 +1,27 @@
 import asyncio, re
 from datetime import datetime
-from typing   import List, Optional, Tuple
+from typing   import List, Optional, Set, Tuple
 
 import dns.asyncquery, dns.message, dns.resolver
 from irctokens import build
 from ircrobots import Bot
 from .config   import Config
+
+COLOR_GREEN = "03"
+COLOR_RED   = "04"
+
+def _set_string(
+        all:       Set[str],
+        highlight: Set[str],
+        color:     str
+        ) -> str:
+    out: List[str] = []
+    for item in sorted(all):
+        if item in highlight:
+            out.append(f"\x03{color}{item}\x03")
+        else:
+            out.append(item)
+    return ", ".join(out)
 
 async def _get_records(
         domain:     str,
@@ -70,12 +86,18 @@ async def run(
 
                     outs.append((False, f"changed {type_format}"))
 
+                    dns_added: Set[str] = set()
                     if dns_type in last_values[domain]:
                         last_display = last_values[domain][dns_type]
-                        was_s = ", ".join(sorted(last_display))
+                        dns_added    = dns_display-last_display
+                        dns_removed  = last_display-dns_display
+
+                        was_s = _set_string(
+                            last_display, dns_removed, COLOR_RED
+                        )
                         outs.append((False, f"  was: {was_s}"))
 
-                    now_s = ", ".join(sorted(dns_display))
+                    now_s = _set_string(dns_display, dns_added, COLOR_GREEN)
                     outs.append((False, f"  now: {now_s}"))
 
                 last_values[domain][dns_type] = dns_display
