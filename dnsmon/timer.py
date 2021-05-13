@@ -45,9 +45,9 @@ async def run(
     last_values: Dict[str, Dict[str, Set[str]]] = {}
 
     while True:
-        utcnow  = datetime.utcnow().replace(microsecond=0)
-        nextmin = 60-utcnow.second
-        #nextmin += (1-(utcnow.minute%2))*60
+        utcnow   = datetime.utcnow().replace(microsecond=0)
+        nextmin  = 60-utcnow.second
+        nextmin += (1-(utcnow.minute%2))*60
         await asyncio.sleep(nextmin)
 
         outs: List[Tuple[bool, str]] = []
