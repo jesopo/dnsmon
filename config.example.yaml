@@ -1,7 +1,8 @@
 server: chat.freenode.net:+6697
 nickname: jess-dnsmon
 #password: hunter2
-channel: "##jess-dnsmon"
+channel-info: "##jess-dnsmon"
+channel-warn: "##jess-dnsmon"
 nameserver: 8.8.8.8
 
 sasl:
